@@ -1,19 +1,13 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import AlarmDetector from "./pages/AlarmDetector";
-import Transcription from "./pages/Transcription";
+import { BrowserRouter } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import AppRoutes from "./routes"; // Importerer alle rutene
 
 function App() {
     return (
-        <>
+       <>
             <Navbar />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/alarm" element={<AlarmDetector />} />
-                <Route path="/transcription" element={<Transcription />} />
-            </Routes>
-        </>
+            <AppRoutes /> {/* Bruker AppRoutes her */}
+            </>
     );
 }
 

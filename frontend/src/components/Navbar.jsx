@@ -7,6 +7,7 @@ export default function Navbar() {
             <Link to="/" style={{ margin: "10px", color: "white" }}>🏠 Home</Link>
             <Link to="/alarm" style={{ margin: "10px", color: "white" }}>🚨 Alarm Detection</Link>
             <Link to="/transcription" style={{ margin: "10px", color: "white" }}>🎙️ Transcription</Link>
+            
         </nav>
     );
 }
