@@ -7,10 +7,26 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Node.js
+node_modules/
+dist/
+dist-ssr/
+
+# Ignorer pakkeadministrasjon
+# (fjern package-lock.json her hvis du vil beholde den i Git)
+package-lock.json
+
+# ML-modeller
+models/saved_model.pb
+models/variables/
+
+# Miljøfiler og sensitive data
+.env
+.env.local
+.env.development
+.env.production
+config.json
+secrets.json
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +38,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Ignorer Python virtuelle miljøer og filer
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.ipynb_checkpoints
+*.sqlite3
+instance/
+
+# OS-spesifikke filer
+Thumbs.db
+desktop.ini
