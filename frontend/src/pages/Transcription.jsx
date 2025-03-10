@@ -67,23 +67,23 @@ export default function Transcription() {
 
     return (
         <div style={{ textAlign: "center", padding: "20px" }}>
-            <h1>🎙️ Lydtranskripsjon</h1>
+            <h1>🎙️ Audio Transcription</h1>
 
             <button onClick={startRecording} style={{ padding: "10px", margin: "10px" }}>
-                🔴 Start Opptak
+                🔴 Start recording
             </button>
             <button onClick={stopRecording} style={{ padding: "10px", margin: "10px" }}>
-                ⏹️ Stopp Opptak
+                ⏹️ Stop recording
             </button>
             <button onClick={transcribeAudio} style={{ padding: "10px", margin: "10px" }} disabled={!audioBlob}>
-                🎤 Transkriber Lyd
+                🎤 Transcribe the sound
             </button>
 
-            {loading && <p>⏳ Transkriberer lyd...</p>}
+            {loading && <p>⏳ Transcribing sound...</p>}
 
             {transcription && (
                 <div style={{ marginTop: "20px", padding: "10px", border: "1px solid gray", borderRadius: "5px" }}>
-                    <h3>📝 Transkribert Tekst:</h3>
+                    <h3>📝 Transcribed Text:</h3>
                     <p>{transcription}</p>
                 </div>
             )}
