@@ -120,6 +120,9 @@ export default function AlarmDetector() {
     
 
     async function uploadAudio(audioBlob) {
+        console.log("📂 Opptak sendes til backend:");
+        console.log("🔊 Lydformat:", audioBlob.type);
+        console.log("📏 Størrelse:", audioBlob.size);
         let formData = new FormData();
         formData.append("file", audioBlob, "audio.wav");
 
