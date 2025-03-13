@@ -13,8 +13,8 @@ const SafetyWelcome = () => {
                     Welcome to Safety Procedures Training!
                 </Typography>
                 <Typography variant="h6" color="text.secondary" paragraph>
-                    Safety is a **top priority** when working with industrial assembly. 
-                    This guide will take you through the most important **workplace safety rules** 
+                    Safety is a <strong> top priority </strong> when working with industrial assembly. 
+                    This guide will take you through the most important  <strong> workplace safety rules </strong> 
                     and how to prevent hazards.
                 </Typography>
                 <Typography variant="body1" color="text.secondary" paragraph>

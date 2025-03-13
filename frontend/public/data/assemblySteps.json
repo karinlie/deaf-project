@@ -1,33 +1,44 @@
 [
     {
-      "id": 0,
-      "text": "Gather all required LEGO pieces.",
-      "images": ["/data/images/0.jpg"]
-    },
-    {
       "id": 1,
       "text": "Assemble the base of the dinosaur.",
-      "images": ["/data/images/1.jpg", "/data/images/1a.jpg", "/data/images/1e.jpg", "/data/images/1p.jpg"]
+      "images": [ "/data/images/1p.jpg", "/data/images/1a.jpg"]
     },
     {
       "id": 2,
-      "text": "Attach the legs securely.",
-      "images": ["/data/images/2.jpg", "/data/images/2a.jpg", "/data/images/2e.jpg", "/data/images/2p.jpg"]
+      "text": "Still working on the base",
+      "images": ["/data/images/2p.jpg", "/data/images/2a.jpg"]
     },
-    {
-        "id": 2,
-        "text": "Attach the legs securely.",
-        "images": ["/data/images/2.jpg", "/data/images/2a.jpg", "/data/images/2e.jpg", "/data/images/2p.jpg"]
-      },
+    
     {
       "id": 3,
       "text": "Build the body structure.",
-      "images": ["/data/images/3.jpg", "/data/images/3a.jpg", "/data/images/3e.jpg", "/data/images/3p.jpg"]
+      "images": ["/data/images/3.jpg",  "/data/images/3a.jpg"]
     },
     {
       "id": 4,
-      "text": "Add the arms and tail.",
+      "text": "Add the neck.",
       "images": ["/data/images/4.jpg", "/data/images/4a.jpg", "/data/images/4e.jpg", "/data/images/4p.jpg"]
+    },
+    {
+      "id": 5,
+      "text": "Work on the head.",
+      "images": ["/data/images/5.jpg", "/data/images/5a.jpg"]
+    },
+    {
+      "id": 6,
+      "text": "Add the tail.",
+      "images": ["/data/images/6.jpg", "/data/images/6a.jpg"]
+    },
+    {
+      "id": 7,
+      "text": "Assemble the feet",
+      "images": ["/data/images/7.jpg", "/data/images/7a.jpg"]
+    },
+    {
+      "id": 8,
+      "text": "Add the feet to the body.",
+      "images": ["/data/images/8.jpg", "/data/images/8a.jpg"]
     }
   ]
   

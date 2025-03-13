@@ -33,31 +33,35 @@ const SafetySteps = () => {
             </Box>
 
             {/* Navigation Buttons */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
-                {/* Previous Button */}
-                {stepIndex > 0 && (
-                    <Button 
-                        variant="contained" 
-                        color="secondary" 
-                        component={Link} 
-                        to={`/safety-step/${stepIndex - 1}`}
-                    >
-                        Previous Step
-                    </Button>
-                )}
+<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 10 }}>
+    {/* Previous Button */}
+    {stepIndex > 0 ? (
+        <Button 
+            variant="contained" 
+            color="secondary" 
+            component={Link} 
+            to={`/safety-step/${stepIndex - 1}`}
+        >
+            ⬅ Previous Step
+        </Button>
+    ) : (
+        <Box /> // Tomt element for å beholde spacing
+    )}
 
-                {/* Next Button */}
-                {stepIndex < safetySteps.length - 1 && (
-                    <Button 
-                        variant="contained" 
-                        color="primary" 
-                        component={Link} 
-                        to={`/safety-step/${stepIndex + 1}`}
-                    >
-                        Next Step
-                    </Button>
-                )}
-            </Box>
+    <Box sx={{ flexGrow: 1 }} /> {/* Plasserer mellomrom mellom knappene */}
+
+    {/* Next Button */}
+    {stepIndex < safetySteps.length - 1 && (
+        <Button 
+            variant="contained" 
+            color="primary" 
+            component={Link} 
+            to={`/safety-step/${stepIndex + 1}`}
+        >
+            Next Step ➡
+        </Button>
+    )}
+</Box>
         </Container>
         </>
     );

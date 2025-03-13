@@ -6,7 +6,6 @@ import Navbar from "../../components/Navbar"; // Navbar component
 const QualityWelcome = () => {
     return (
         <>
-        <Navbar /> {/* Navbar inside the page */}
         <Container maxWidth="md">
             <Box sx={{ textAlign: "center", mt: 6, p: 4, borderRadius: "12px", boxShadow: 3 }}>
                 <Typography variant="h3" gutterBottom>

@@ -8,6 +8,11 @@ from pydub import AudioSegment
 import whisper
 import os
 import whisper
+import serial
+import time
+from fastapi import APIRouter
+
+from serialData import movement_alert
 
 print("🚀 Laster inn Whisper-modellen...")
 whisper_model = whisper.load_model("base")  # Velg "tiny", "small", "medium" eller "large"
@@ -15,6 +20,7 @@ print("✅ Whisper-modellen er lastet!")
 
 
 app = FastAPI()
+router = APIRouter()
 
 # ✅ Aktiver CORS slik at frontend (localhost:5173) kan snakke med backend (localhost:8000)
 app.add_middleware(
@@ -24,6 +30,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/esp32/")
+async def serial_data():
+    """ Returns the latest movement alert instantly. """
+    result = movement_alert()
+    print("🚨 Movement alert response:", result)  # ✅ Debugging
+    return result  # ✅ Returns the latest reading instantly
+    
 
 def yamnet_predict(audio):
         

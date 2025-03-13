@@ -6,20 +6,18 @@ import Navbar from "../../components/Navbar";
 const AssemblyWelcome = () => {
     return (
         <>
-        <Navbar />
         <Container maxWidth="md">
             <Box sx={{ textAlign: "center", mt: 6, p: 4, borderRadius: "12px", boxShadow: 3 }}>
                 <Typography variant="h3" gutterBottom>
                     Welcome to the LEGO Dinosaur Assembly!
                 </Typography>
                 <Typography variant="h6" color="text.secondary" paragraph>
-                    Get ready to build your very own **LEGO dinosaur!** 🦖
+                    Get ready to build <strong>LEGO Dinosaur</strong>! <br />
                     Follow the step-by-step guide to assemble your dinosaur from LEGO bricks.
                 </Typography>
                 <Typography variant="body1" color="text.secondary" paragraph>
                     Each step will guide you through the process, from gathering the right pieces
-                    to putting everything together. Take your time, have fun, and let's build
-                    something amazing!
+                    to putting everything together.
                 </Typography>
 
                 {/* Start Button → Takes user to the first step */}

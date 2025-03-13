@@ -17,7 +17,7 @@ function Home() {
                     alignItems: "center",
                     justifyContent: "center",
                     textAlign: "center",
-                    height: "80vh",
+                    height: "60vh",
                 }}
             >
                 <Typography variant="h2" gutterBottom>
