@@ -8,15 +8,29 @@ import TranscriptionPopup from "./TranscriptionComp"; // Importer popup-komponen
 export default function Navbar() {
     return (
         <nav style={{ 
-            padding: "20px", 
-            background: "#333", 
+            display: "flex",
+            alignItems: "center",
+            padding: "15px 30px",
+            background: "#CC0033",
             color: "white", 
-            margin: "0px", 
             fontSize: "1.25em", 
-            fontFamily: "'Poppins', sans-serif"
+            fontFamily: "'Poppins', sans-serif",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
         }}>
-            <Link to="/assembly" style={{ margin: "0.5em", color: "white", textDecoration: "none" }}>🏠 Home</Link>
-            <Link to="/alarm" style={{ margin: "0.5em", color: "white", textDecoration: "none" }}>🚨 Alarm Detection</Link>
+            <Link 
+                to="/assembly" 
+                style={{ 
+                    marginLeft: "10px", 
+                    color: "white", 
+                    textDecoration: "none", 
+                    fontWeight: "bold",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                }}
+            >
+                🏠 Homepage
+            </Link>
         </nav>
     );
 }

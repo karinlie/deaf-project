@@ -23,11 +23,17 @@ const AssemblyWelcome = () => {
                 {/* Start Button → Takes user to the first step */}
                 <Button
                     variant="contained"
-                    color="primary"
                     size="large"
                     component={Link}
                     to="/assembly-step/0" // Navigates to the first assembly step
-                    sx={{ mt: 3 }}
+                    sx={{
+                        mt: 3,
+                        backgroundColor: "#CC0033", // Same as navbar
+                        color: "white",
+                        "&:hover": {
+                            backgroundColor: "#990026" // Darker red on hover
+                        }
+                    }}
                 >
                     Start Building 🛠️
                 </Button>

@@ -10,6 +10,8 @@ const safetySteps = [
     "Step 3: Follow proper procedures for handling tools and machinery.",
     "Step 4: Be aware of emergency exits and fire safety protocols.",
     "Step 5: Always report hazards or unsafe conditions to your supervisor.",
+    "Step 6: Get familiar with the environment and possible danger",
+    "Step 7: Listen to the alert and be careful when something is approaching"
 ];
 
 const SafetySteps = () => {

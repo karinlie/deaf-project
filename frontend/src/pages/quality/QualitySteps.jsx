@@ -6,10 +6,8 @@ import StepIndicator from "../../components/StepIndicator";
 const qualitySteps = [
     "Step 1: Understand product specifications before beginning inspection.",
     "Step 2: Check for defects and irregularities in materials.",
-    "Step 3: Measure dimensions to ensure accuracy.",
-    "Step 4: Verify proper assembly of all components.",
-    "Step 5: Perform a final quality assurance check before completion.",
-    "Step 6: Make sure that all pieces sit tight"
+    "Step 3: Verify proper assembly of all components.",
+    "Step 4: Make sure that all pieces sit tight"
 ];
 
 const QualitySteps = () => {

@@ -78,11 +78,28 @@ export default function TranscriptionPopup() {
 
     return (
         <>
-            {/* Floating microphone button */}
-            {!isOpen && (
+        {/* Floating microphone button */}
+        {!isOpen && (
+            <div style={{ 
+                position: "fixed", 
+                bottom: 90, 
+                right: 30, 
+                textAlign: "center" 
+            }}>
+                <span style={{
+                    backgroundColor: "rgba(216, 126, 126, 0.7)", 
+                    color: "black", 
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    fontSize: "14px",
+                    display: "inline-block",
+                    marginBottom: "5px"
+                }}>
+                    Activate transcription
+                </span>
+
                 <Button 
                     variant="contained" 
-                    color="primary" 
                     onClick={() => setIsOpen(true)} 
                     sx={{ 
                         position: "fixed", 
@@ -92,12 +109,15 @@ export default function TranscriptionPopup() {
                         width: 60,
                         height: 60,
                         minWidth: "unset",
-                        boxShadow: 3
+                        boxShadow: 3,
+                        backgroundColor: "#CC0033", // Samme farge som navbaren
+                        '&:hover': { backgroundColor: "#A00028" } // Litt mørkere ved hover
                     }}
                 >
-                    <MicIcon />
+                    <MicIcon sx={{ color: "white" }} />
                 </Button>
-            )}
+            </div>
+        )}
 
             {/* Popup window */}
             {isOpen && (

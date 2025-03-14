@@ -20,7 +20,7 @@ function AppRoutes() {
                 <Route path="/alarm" element={<AlarmDetector />} />
                 <Route path="/transcription" element={<Transcription />} />
                 <Route path="/assembly" element={<AssemblyTraining />} />
-                <Route path= "/assembly-technquies" element={<AssemblyWelcome />}/>
+                <Route path= "/assembly-techniques" element={<AssemblyWelcome />}/>
                 <Route path="/assembly-step/:stepNumber"  element={<AssemblySteps />} />
                 <Route path="/safety-welcome" element={<SafetyWelcome />} /> {/* New Route */}
                 <Route path="/safety-step/:stepNumber" element={<SafetySteps />} /> {/* New Route */}

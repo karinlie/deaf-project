@@ -1,108 +1,103 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Button, Box } from "@mui/material";
+import { Container, Typography, Button, Box, Grid } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import StepIndicator from "../../components/StepIndicator";
 
-const AssemblySteps = () => {
-    const { stepNumber } = useParams(); 
-    const stepIndex = parseInt(stepNumber, 10) || 0; 
-
-    const [steps, setSteps] = useState([]);  
-    const [loading, setLoading] = useState(true); 
+const AssemblyStep = () => {
+    const { stepNumber } = useParams(); // Get current step from URL
+    const [stepData, setStepData] = useState(null);
 
     useEffect(() => {
-        fetch("/data/assemblySteps.json")
-            .then((res) => res.json())
-            .then((data) => {
-                setSteps(data);
-                setLoading(false);
+        fetch("/data/assemblySteps.json")  // ✅ Fetch JSON from public/data/
+            .then(response => response.json())
+            .then(data => {
+                const step = data.find(s => s.id === parseInt(stepNumber));
+                setStepData(step);
             })
-            .catch((error) => console.error("Error loading assembly steps:", error));
-    }, []);
+            .catch(error => console.error("Error loading JSON:", error));
+    }, [stepNumber]);
 
-    if (loading) {
-        return <p>Loading assembly steps...</p>;
+    if (!stepData) {
+        return <Typography>Loading...</Typography>;
     }
-
-    if (stepIndex < 0 || stepIndex >= steps.length) {
-        return <p>Invalid step. Please go back.</p>;
-    }
-
-    const currentStep = steps[stepIndex];
 
     return (
-        <>
-            <Container maxWidth="lg">
-                <Box sx={{ textAlign: "center", my: 4 }}>
-                    <Typography variant="h3" gutterBottom>
-                        Assembly Step {stepIndex + 1}
-                    </Typography>
+        <Container maxWidth="lg">
+            {/* Header Section */}
+            <Box sx={{ textAlign: "center", mt: 4 }}>
+                <Typography variant="h3" fontWeight="bold" gutterBottom>
+                    Assembly Step {stepData.id}
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary">
+                    Step {stepData.id} of 8
+                </Typography>
+                <Typography variant="h5" sx={{ mt: 2 }}>
+                    {stepData.text}
+                </Typography>
+            </Box>
 
-                    <StepIndicator stepIndex={stepIndex} totalSteps={steps.length} />
-
-                    <Typography variant="h5" color="black" sx={{ mt: 2 }}>
-                        {currentStep.text}
-                    </Typography>
-
-                    {/* 📌 Image Section with Headings */}
-                    <Box sx={{ mt: 8, display: "flex", justifyContent: "center", gap: 15, flexWrap: "wrap" }}>
+            {/* Images Section */}
+            <Grid container spacing={4} justifyContent="center" alignItems="center" sx={{ mt: 4 }}>
+                {stepData.images.map((image, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
                         <Box sx={{ textAlign: "center" }}>
-                            <Typography variant="subtitle1"  color="text.secondary">
-                                🧱 Make sure you have these bricks
-                            </Typography>
                             <img 
-                                src={currentStep.images[0]} 
-                                alt={`Step ${stepIndex + 1} - Parts`} 
-                                style={{ width: "100%", maxWidth: "800px", height: "auto", borderRadius: "10px", marginTop: "10px" }}
-/>
-                        </Box>
-
-                        <Box sx={{ textAlign: "center" }}>
-                            <Typography variant="subtitle1" fontWeight="bold" color="black">
-                                🔨 Assemble like this
-                            </Typography>
-                            <img 
-                                src={currentStep.images[1]} 
-                                alt={`Step ${stepIndex + 1} - Assembly`} 
-                                style={{ width: "100%", maxWidth: "800px", height: "auto", borderRadius: "10px", marginTop: "10px" }}
+                                src={image} 
+                                alt={`Step ${stepData.id} Image ${index + 1}`} 
+                                style={{ 
+                                    maxWidth: "100%", 
+                                    height: "auto", 
+                                    transition: "0.3s", 
+                                    cursor: "pointer",
+                                    "&:hover": { transform: "scale(1.1)" } 
+                                }}
                             />
                         </Box>
-                    </Box>
-                </Box>
+                    </Grid>
+                ))}
+            </Grid>
 
-                {/* Navigation Buttons */}
-<Box sx={{ display: "flex", justifyContent: "space-between", mt: 15 }}>
-    {stepIndex > 0 && (
-        <Button 
-            variant="contained" 
-            color="secondary" 
-            component={Link} 
-            to={`/assembly-step/${stepIndex - 1}`}
-            sx={{ flexGrow: 0 }} // Sikrer at knappen holder sin posisjon
-        >
-            ⬅ Previous Step
-        </Button>
-    )}
-    
-    <Box sx={{ flexGrow: 1 }} /> {/* Plasserer mellomrom mellom knappene */}
+            {/* Navigation Buttons */}
+            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 5 }}>
+                {stepData.id > 1 && (
+                    <Button
+                        variant="contained"
+                        component={Link}
+                        to={`/assembly-step/${stepData.id - 1}`}
+                        sx={{
+                            backgroundColor: "#CCCCCC",
+                            color: "black",
+                            padding: "12px 24px",
+                            fontSize: "1.2rem",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            "&:hover": { backgroundColor: "#AAAAAA" },
+                        }}
+                    >
+                        ← Previous Step
+                    </Button>
+                )}
 
-    {stepIndex < steps.length - 1 && (
-        <Button 
-            variant="contained" 
-            color="primary" 
-            component={Link} 
-            to={`/assembly-step/${stepIndex + 1}`}
-            sx={{ flexGrow: 0 }} // Holder "Next Step" til høyre
-        >
-            Next Step ➡
-        </Button>
-    )}
-</Box>
-
-            </Container>
-        </>
+                {stepData.id < 8 && (
+                    <Button
+                        variant="contained"
+                        component={Link}
+                        to={`/assembly-step/${stepData.id + 1}`}
+                        sx={{
+                            backgroundColor: "#CC0033",
+                            color: "white",
+                            padding: "12px 24px",
+                            fontSize: "1.2rem",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            "&:hover": { backgroundColor: "#990026" },
+                        }}
+                    >
+                        Next Step →
+                    </Button>
+                )}
+            </Box>
+        </Container>
     );
 };
 
-export default AssemblySteps;
+export default AssemblyStep;
