@@ -1,4 +1,9 @@
 [
+  {
+    "id": 0,
+    "text": "Dette her er kun for dummies",
+    "images": [ "/data/images/1p.jpg", "/data/images/1a.jpg"]
+  },
     {
       "id": 1,
       "text": "Assemble the base of the dinosaur.",

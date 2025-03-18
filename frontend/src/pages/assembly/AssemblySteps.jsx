@@ -7,15 +7,32 @@ const AssemblyStep = () => {
     const [stepData, setStepData] = useState(null);
 
     useEffect(() => {
-        fetch("/data/assemblySteps.json")  // ✅ Fetch JSON from public/data/
+        if (!stepNumber) {
+            console.error("🚨 stepNumber is undefined!");
+            return;
+        }
+    
+        console.log("Current stepNumber from URL:", stepNumber); // ✅ Check URL param
+    
+        fetch("/data/assemblySteps.json")
             .then(response => response.json())
             .then(data => {
-                const step = data.find(s => s.id === parseInt(stepNumber));
-                setStepData(step);
+                console.log("Fetched JSON Data:", data); // ✅ JSON data loaded
+    
+                const step = data.find(s => s.id === Number(stepNumber)); // ✅ Convert to number
+                console.log("Step found:", step); // ✅ Check if step is found
+    
+                if (step) {
+                    setStepData(step);
+                } else {
+                    console.error("🚨 No step found for ID:", stepNumber);
+                }
             })
-            .catch(error => console.error("Error loading JSON:", error));
+            .catch(error => {
+                console.error("Error loading JSON:", error);
+            });
     }, [stepNumber]);
-
+    
     if (!stepData) {
         return <Typography>Loading...</Typography>;
     }
@@ -57,7 +74,7 @@ const AssemblyStep = () => {
             </Grid>
 
             {/* Navigation Buttons */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 5 }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }}>
                 {stepData.id > 1 && (
                     <Button
                         variant="contained"

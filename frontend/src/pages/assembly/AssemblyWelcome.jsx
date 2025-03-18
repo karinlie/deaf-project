@@ -25,7 +25,7 @@ const AssemblyWelcome = () => {
                     variant="contained"
                     size="large"
                     component={Link}
-                    to="/assembly-step/0" // Navigates to the first assembly step
+                    to="/assembly-step/1" // Navigates to the first assembly step
                     sx={{
                         mt: 3,
                         backgroundColor: "#CC0033", // Same as navbar
