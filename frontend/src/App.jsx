@@ -6,13 +6,15 @@ import Navbar from "./components/Navbar";
 import AppRoutes from "./routes";
 import PopupAlert from "./components/PopupAlert";
 import TranscriptionPopup from "./components/TranscriptionComp"; // ✅ Import floating mic button
+import AlertHuman from "./components/AlertHuman";
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline /> {/* ✅ Ensures a clean and consistent UI */}
             <Navbar />
-            <PopupAlert /> {/* ✅ Always listening for movement */}
+            {/* <PopupAlert /> ✅ Always listening for movement */}
+            <AlertHuman />
             <AppRoutes />
             <TranscriptionPopup /> {/* ✅ Always available */}
         </ThemeProvider>

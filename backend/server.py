@@ -11,8 +11,11 @@ import whisper
 import serial
 import time
 from fastapi import APIRouter
+from yolo_backend import object_function, get_latest_detections
 
-from serialData import movement_alert
+from fastapi.responses import JSONResponse
+import json
+
 
 print("🚀 Laster inn Whisper-modellen...")
 whisper_model = whisper.load_model("base")  # Velg "tiny", "small", "medium" eller "large"
@@ -31,14 +34,53 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+arduino_port = "COM4"  # Endre til riktig port (Linux: "/dev/ttyUSB0", Mac: "/dev/cu.usbserial")
+baud_rate = 9600  # Må matche Arduino-koden
 
-@app.get("/esp32/")
-async def serial_data():
-    """ Returns the latest movement alert instantly. """
-    result = movement_alert()
-    print("🚨 Movement alert response:", result)  # ✅ Debugging
-    return result  # ✅ Returns the latest reading instantly
-    
+try:
+    arduino = serial.Serial(arduino_port, baud_rate, timeout=1)
+    time.sleep(2)  # Vent på at Arduino starter opp
+    print("✅ Arduino tilkoblet!")
+except Exception as e:
+    print(f"❌ Feil ved tilkobling til Arduino: {e}")
+
+
+@app.get("/detection/")
+async def detect_objects():
+    result = get_latest_detections()
+    detections = result.get("detections", [])
+
+    print("📸 YOLO Resultat:", detections)
+
+    for detection in detections:
+        if detection["object"] == "human":
+            confidence = detection["confidence"]
+            bbox = detection["bbox"][0]  # Vi tar bare én boks for nå
+            x1, y1, x2, y2 = bbox
+            center_x = (x1 + x2) / 2
+
+            print(f"👤 Person oppdaget midt på x = {center_x:.2f}")
+
+            if center_x < 320:
+                print("🔊 Person til VENSTRE – sender 'V1'")
+                arduino.write(b'1')  # Venstre vibrasjon
+            else:
+                print("🔊 Person til HØYRE – sender 'V2'")
+                arduino.write(b'2')  # Høyre vibrasjon
+
+            return JSONResponse(content={
+                "movement_alert": True,
+                "status": "Menneske detektert og rett vibrasjon aktivert!",
+                "confidence": confidence,
+                "position": "left" if center_x < 320 else "right",
+                "timestamp": result.get("timestamp")
+            })
+
+    return JSONResponse(content={
+        "movement_alert": False,
+        "status": "Ingen mennesker detektert.",
+        "timestamp": result.get("timestamp")
+    })
 
 def yamnet_predict(audio):
         
@@ -141,27 +183,3 @@ async def transcribe_audio(file: UploadFile = File(...)):
         return {"error": str(e)}
 
 
-@app.post("/detect/")
-async def detect_alarm(file: UploadFile = File(...)):
-    try:
-        # 🎵 Les lydfilen
-        audio_bytes = await file.read()
-        print(f"📂 Lydfil mottatt: {len(audio_bytes)} bytes")  # Sjekk at vi mottar lydfilen
-
-        waveform = preprocess_audio(audio_bytes)
-        print(f"🔄 Prosessert lyd - Shape: {waveform.shape}")  # Sjekk at waveform er riktig
-
-        # 🔍 Kjør YAMNet-modellen
-        output_dict = yamnet_model(waveform)
-        scores = output_dict["predictions"]
-
-        predicted_class = tf.argmax(scores, axis=-1).numpy()[0]
-        confidence = tf.reduce_max(scores).numpy()
-
-        print(f"🎯 Predikert klasse: {predicted_class} (Sannsynlighet: {confidence:.2f})")  # Logg resultat
-
-        return {"class_id": int(predicted_class), "confidence": float(confidence)}
-
-    except Exception as e:
-        print(f"⚠️ FEIL: {str(e)}")
-        return {"error": str(e)}
