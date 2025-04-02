@@ -18,12 +18,20 @@ def object_function():
     """🚀 Kjør YOLO på kameraet og oppdater `latest_detections` med JSON-data."""
     print("🔄 Starter YOLO object_function()...")
 
-    cap = cv2.VideoCapture(0)  # Prøv 1 hvis 0 ikke fungerer
+    # cap = cv2.VideoCapture(0)  # Prøv 1 hvis 0 ikke fungerer
+
+    # if not cap.isOpened():
+    #     print("❌ Feil: Kunne ikke åpne kameraet.")
+    #     latest_detections["error"] = "Kameraet kunne ikke åpnes"
+    #     return
+
+    cap = cv2.VideoCapture("http://10.22.110.129:8080/video_feed")
+
 
     if not cap.isOpened():
-        print("❌ Feil: Kunne ikke åpne kameraet.")
-        latest_detections["error"] = "Kameraet kunne ikke åpnes"
-        return
+        print("❌ OpenCV klarte ikke åpne MJPEG-strømmen.")
+    else:
+        print("✅ OpenCV åpnet MJPEG-strømmen!")
 
     while True:
         success, frame = cap.read()
