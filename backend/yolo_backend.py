@@ -1,75 +1,114 @@
-
-from fastapi.responses import JSONResponse
 from ultralytics import YOLO
 import cv2
-import json
 import threading
 import time
+import math
 
-
+# ✅ ArUco-oppsett
+aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+aruco_params = cv2.aruco.DetectorParameters()
+ARUCO_WORKER_ID = 0  # <- endre hvis du bruker annen ID
 
 # ✅ YOLO-modellen
 model = YOLO('yolo11m.pt')
 
-# ✅ Variabel for å lagre siste deteksjoner
-latest_detections = {"detections": []}
+# ✅ Delbar variabel for API
+latest_detections = {"detections": [], "timestamp": "", "worker_x": None}
+
+# ✅ Arbeider-lock
+locked_worker_center = None
+worker_locked = False
+
+
+def get_center(bbox):
+    x1, y1, x2, y2 = bbox
+    return ((x1 + x2) / 2, (y1 + y2) / 2)
+
 
 def object_function():
-    """🚀 Kjør YOLO på kameraet og oppdater `latest_detections` med JSON-data."""
+    global locked_worker_center, worker_locked
+
     print("🔄 Starter YOLO object_function()...")
-
-    # cap = cv2.VideoCapture(0)  # Prøv 1 hvis 0 ikke fungerer
-
-    # if not cap.isOpened():
-    #     print("❌ Feil: Kunne ikke åpne kameraet.")
-    #     latest_detections["error"] = "Kameraet kunne ikke åpnes"
-    #     return
-
-    cap = cv2.VideoCapture("http://10.22.110.129:8080/video_feed")
-
+    cap = cv2.VideoCapture("http://10.22.111.227:8080/video_feed")
 
     if not cap.isOpened():
         print("❌ OpenCV klarte ikke åpne MJPEG-strømmen.")
+        return
     else:
         print("✅ OpenCV åpnet MJPEG-strømmen!")
 
     while True:
         success, frame = cap.read()
-        
         if not success:
             print("❌ Feil: Kunne ikke lese fra kameraet")
             break
 
-        # print("📡 Kjører YOLO-modellen på bildet...")
         results = model(frame, conf=0.3)
-
         detections = []
+        person_boxes = []
+
         for result in results:
             for box in result.boxes:
                 class_id = int(box.cls)
                 confidence = float(box.conf)
                 bbox = box.xyxy.tolist()
 
-                # print(f"🔍 Oppdaget klasse {class_id} med {confidence:.2f} sikkerhet")
+                if class_id == 0:  # human
+                    detections.append({
+                        "object": "human",
+                        "confidence": confidence,
+                        "bbox": bbox
+                    })
+                    person_boxes.append(bbox[0])
 
-                if class_id == 0:
-                    detections.append({"object": "human", "confidence": confidence, "bbox": bbox})
-                elif class_id == 15:
-                    detections.append({"object": "robot", "confidence": confidence, "bbox": bbox})
+                elif class_id == 15:  # robot
+                    detections.append({
+                        "object": "robot",
+                        "confidence": confidence,
+                        "bbox": bbox
+                    })
 
-        # ✅ Oppdaterer JSON-variabelen som API-en bruker
+        # 🔍 Finn ArUco-marker og tilhørende arbeider
+        worker_x = None
+        corners, ids, _ = cv2.aruco.detectMarkers(frame, aruco_dict, parameters=aruco_params)
+
+        if ids is not None and ARUCO_WORKER_ID in ids:
+            idx = list(ids.flatten()).index(ARUCO_WORKER_ID)
+            aruco_corners = corners[idx][0]
+            marker_center = (
+                int(aruco_corners[:, 0].mean()),
+                int(aruco_corners[:, 1].mean())
+            )
+
+            if not worker_locked:
+                min_dist = float("inf")
+                for box in person_boxes:
+                    center = get_center(box)
+                    dist = math.dist(center, marker_center)
+                    if dist < min_dist:
+                        min_dist = dist
+                        locked_worker_center = center
+
+                if locked_worker_center:
+                    worker_locked = True
+                    print("👷 Arbeider funnet og låst!")
+
+            if worker_locked:
+                worker_x = locked_worker_center[0]
+
+        # ✅ Oppdater felles resultater
         latest_detections["detections"] = detections
-        latest_detections["timestamp"] = time.strftime("%Y-%m-%d %H:%M:%S")  # ⏳ Legger til tidsstempel
-        
-
-        
+        latest_detections["timestamp"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        latest_detections["worker_x"] = worker_x
 
     cap.release()
-    
 
-# ✅ Start YOLO i en egen tråd
+
+# ✅ Start YOLO i egen tråd
 yolo_thread = threading.Thread(target=object_function, daemon=True)
 yolo_thread.start()
 
+
+# ✅ API-hjelpefunksjon
 def get_latest_detections():
     return latest_detections

@@ -80,43 +80,48 @@ export default function TranscriptionPopup() {
         <>
         {/* Floating microphone button */}
         {!isOpen && (
-            <div style={{ 
-                position: "fixed", 
-                bottom: 90, 
-                right: 30, 
-                textAlign: "center" 
-            }}>
-                <span style={{
-                    backgroundColor: "rgba(216, 126, 126, 0.7)", 
-                    color: "black", 
-                    padding: "5px 10px",
-                    borderRadius: "5px",
+            <Box
+            sx={{
+                position: "fixed",
+                bottom: 20,
+                right: 20,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                zIndex: 1000
+            }}
+        >
+            <Typography
+                variant="body2"
+                sx={{
+                    backgroundColor: "rgba(216, 126, 126, 0.7)",
+                    color: "black",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
                     fontSize: "14px",
-                    display: "inline-block",
-                    marginBottom: "5px"
-                }}>
-                    Activate transcription
-                </span>
-
-                <Button 
-                    variant="contained" 
-                    onClick={() => setIsOpen(true)} 
-                    sx={{ 
-                        position: "fixed", 
-                        bottom: 20, 
-                        right: 20, 
-                        borderRadius: "50%",
-                        width: 60,
-                        height: 60,
-                        minWidth: "unset",
-                        boxShadow: 3,
-                        backgroundColor: "#CC0033", // Samme farge som navbaren
-                        '&:hover': { backgroundColor: "#A00028" } // Litt mørkere ved hover
-                    }}
-                >
-                    <MicIcon sx={{ color: "white" }} />
-                </Button>
-            </div>
+                    whiteSpace: "nowrap"
+                }}
+            >
+                Activate transcription
+            </Typography>
+        
+            <Button
+                variant="contained"
+                onClick={() => setIsOpen(true)}
+                sx={{
+                    borderRadius: "50%",
+                    width: 60,
+                    height: 60,
+                    minWidth: "unset",
+                    boxShadow: 3,
+                    backgroundColor: "#CC0033",
+                    '&:hover': { backgroundColor: "#A00028" }
+                }}
+            >
+                <MicIcon sx={{ color: "white" }} />
+            </Button>
+        </Box>
+        
         )}
 
             {/* Popup window */}

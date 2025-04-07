@@ -5,6 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 const AlertHuman = () => {
   const [movementDetected, setMovementDetected] = useState(false);
   const API_URL = "http://localhost:8000/detection/";
+  const [movementSide, setMovementSide] = useState("");
 
   // Fetch sensor data from FastAPI
   const fetchSensorData = async () => {
@@ -15,6 +16,7 @@ const AlertHuman = () => {
 
       if (data.movement_alert === true) {
         setMovementDetected(true);
+        setMovementSide(data.position);
       }
     } catch (error) {
       console.error("❌ Error fetching sensor data:", error);
@@ -27,8 +29,32 @@ const AlertHuman = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (movementDetected) {
+      const timer = setTimeout(() => setMovementDetected(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [movementDetected]);
+  
   return (
-    <Dialog open={movementDetected} onClose={() => setMovementDetected(false)} maxWidth="sm" fullWidth>
+    <Dialog
+  open={movementDetected}
+  onClose={() => setMovementDetected(false)}
+  maxWidth="sm"
+  fullWidth
+  PaperProps={{
+    sx: {
+      position: "fixed",
+      bottom: 20,
+      ...(movementSide === "left"
+        ? { left: 20 }
+        : movementSide === "right"
+        ? { right: 20 }
+        : { left: "50%", transform: "translateX(-50%)" })
+    }
+  }}
+>
+
       <DialogTitle>
         ⚠️ Human alert!
         <IconButton
@@ -42,7 +68,7 @@ const AlertHuman = () => {
 
       <DialogContent>
         <Typography variant="body1">
-          🚨 Warning: Movement detected by the Computer vision sensor. Stay alert!
+          🚨 Warning: Movement detected on the <strong>{movementSide}</strong> side. Stay alert!
         </Typography>
       </DialogContent>
 

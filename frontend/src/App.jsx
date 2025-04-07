@@ -14,7 +14,7 @@ function App() {
             <CssBaseline /> {/* ✅ Ensures a clean and consistent UI */}
             <Navbar />
             {/* <PopupAlert /> ✅ Always listening for movement */}
-            <AlertHuman />
+            {/* <AlertHuman /> */}
             <AppRoutes />
             <TranscriptionPopup /> {/* ✅ Always available */}
         </ThemeProvider>

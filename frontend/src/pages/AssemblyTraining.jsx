@@ -5,8 +5,10 @@ import BuildIcon from "@mui/icons-material/Build"; // Tools Icon
 import SafetyDividerIcon from "@mui/icons-material/SafetyDivider"; // Safety Icon
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing"; // Assembly Icon
 
+
 function AssemblyTraining() {
     return (
+    
         <Container maxWidth="lg">
             {/* Hero Section */}
             <Box 

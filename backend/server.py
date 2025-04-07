@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Request
 import tensorflow as tf
 import numpy as np
 import io
@@ -11,6 +11,7 @@ import whisper
 import serial
 import time
 from fastapi import APIRouter
+# from backend.yolo_backend_old import object_function, get_latest_detections
 from yolo_backend import object_function, get_latest_detections
 
 from fastapi.responses import JSONResponse
@@ -34,6 +35,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+#writing to a csv file to save data
+import csv
+import os
+
+
+log_file = "detection_log.csv"
+if not os.path.exists(log_file):
+    with open(log_file, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["timestamp", "worker_x", "center_x", "confidence", "note"])
+
+
+
 arduino_port = "COM4"  # Endre til riktig port (Linux: "/dev/ttyUSB0", Mac: "/dev/cu.usbserial")
 baud_rate = 9600  # Må matche Arduino-koden
 
@@ -45,116 +59,126 @@ except Exception as e:
     print(f"❌ Feil ved tilkobling til Arduino: {e}")
 
 
+@app.post("/vibrate")
+async def vibrate(request: Request):
+    if not arduino:
+        return JSONResponse(status_code=500, content={"message": "Arduino not connected."})
+
+    data = await request.json()
+    command = data.get("command")
+
+    if command == "1":
+        arduino.write(b'1')
+        return {"message": "🔊 Left vibration sent"}
+    elif command == "2":
+        arduino.write(b'2')
+        return {"message": "🔊 Right vibration sent"}
+    else:
+        return JSONResponse(status_code=400, content={"message": "❌ Invalid command. Use '1' or '2'."})
+
+
 @app.get("/detection/")
 async def detect_objects():
     result = get_latest_detections()
     detections = result.get("detections", [])
+    worker_x = result.get("worker_x")
+    timestamp = result.get("timestamp")
 
     print("📸 YOLO Resultat:", detections)
+
+    # 🔐 Ignorer hvis arbeider ikke er definert
+    if worker_x is None:
+        return JSONResponse(content={
+            "movement_alert": False,
+            "status": "Arbeiderposisjon ikke tilgjengelig – ArUco ikke funnet.",
+            "timestamp": timestamp
+        })
+
+    # 📏 Hvor nærme er 'for nærme' til arbeideren?
+    WORKER_IGNORE_MARGIN = 10
 
     for detection in detections:
         if detection["object"] == "human":
             confidence = detection["confidence"]
-            bbox = detection["bbox"][0]  # Vi tar bare én boks for nå
+            bbox = detection["bbox"][0]
             x1, y1, x2, y2 = bbox
             center_x = (x1 + x2) / 2
 
-            print(f"👤 Person oppdaget midt på x = {center_x:.2f}")
+            print(f"👤 Worker oppdaget midt på x = {worker_x:.2f}, person oppdaget på x ={center_x:.2f} ")
 
-            if center_x < 320:
+            note = "ignored (worker)" if abs(center_x - worker_x) < WORKER_IGNORE_MARGIN else "triggered"
+            with open(log_file, mode='a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([timestamp, round(worker_x, 2), round(center_x, 2), round(confidence, 2), note])
+
+            #ingoring the worker as a human
+            if abs(center_x - worker_x) < WORKER_IGNORE_MARGIN:
+                print("🙅‍♂️ Ignorerer arbeider (for nær ArUco-posisjon)")
+                continue
+
+            #sending vibration for the position
+            if int(center_x) < int(worker_x):
                 print("🔊 Person til VENSTRE – sender 'V1'")
-                arduino.write(b'1')  # Venstre vibrasjon
+                arduino.write(b'1')
+                position = "left"
             else:
                 print("🔊 Person til HØYRE – sender 'V2'")
-                arduino.write(b'2')  # Høyre vibrasjon
+                arduino.write(b'2')
+                position = "right"
 
             return JSONResponse(content={
                 "movement_alert": True,
-                "status": "Menneske detektert og rett vibrasjon aktivert!",
+                "status": "Menneske detektert og vibrasjon sendt!",
                 "confidence": confidence,
-                "position": "left" if center_x < 320 else "right",
-                "timestamp": result.get("timestamp")
+                "position": position,
+                "timestamp": timestamp
             })
 
     return JSONResponse(content={
         "movement_alert": False,
-        "status": "Ingen mennesker detektert.",
-        "timestamp": result.get("timestamp")
+        "status": "Bare arbeideren detektert – ingen vibrasjon sendt.",
+        "timestamp": timestamp
     })
 
-def yamnet_predict(audio):
-        
-    model_path = "C:/Users/Karin/alarm-detector/models"  # Sjekk at stien er riktig
-    try:
-        yamnet_model = tf.saved_model.load(model_path)
-        print("✅  yamnet Modellen er lastet inn!")
-    except Exception as e:
-        print(f"❌ Feil ved lasting av modellen: {e}")
-    yamnet_predict_fn = yamnet_model.signatures["serving_default"]  # Bruk riktig signatur
-    return yamnet_predict_fn
+# @app.get("/detection/")
+# async def detect_objects():
+#     result = get_latest_detections()
+#     detections = result.get("detections", [])
 
-# ✅ Funksjon for å forberede lydfilen
-def preprocess_audio(audio_bytes):
-    """Konverterer en lydfil til 16kHz mono og returnerer en normalisert waveform."""
-    try:
-        print("🚀 Starter lydprosessering...")
-        print(f"📂 Mottatt lydstørrelse: {len(audio_bytes)} bytes")
+#     print("📸 YOLO Resultat:", detections)
 
-        # 🎵 Lagre filen for debugging
-        test_file = "test_received.wav"
-        with open(test_file, "wb") as f:
-            f.write(audio_bytes)
-        print(f"✅ Lydfil lagret som {test_file}")
+#     for detection in detections:
+#         if detection["object"] == "human":
+#             confidence = detection["confidence"]
+#             bbox = detection["bbox"][0]  # Vi tar bare én boks for nå
+#             x1, y1, x2, y2 = bbox
+#             center_x = (x1 + x2) / 2
 
-        # 🎵 Konverter fra WEBM til WAV med pydub
-        audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="webm")
-        audio = audio.set_frame_rate(16000).set_channels(1)  # Konverter til 16kHz mono
+#             print(f"👤 Person oppdaget midt på x = {center_x:.2f}")
 
-        # 🔍 Konverter til NumPy-array for librosa
-        audio_array = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0  # Normalisering [-1, 1]
+#             if center_x < 320:
+#                 print("🔊 Person til VENSTRE – sender 'V1'")
+#                 arduino.write(b'1')  # Venstre vibrasjon
+#             else:
+#                 print("🔊 Person til HØYRE – sender 'V2'")
+#                 arduino.write(b'2')  # Høyre vibrasjon
 
-        # 🚀 Konverter til TensorFlow-format
-        waveform = tf.convert_to_tensor(np.expand_dims(audio_array, axis=0), dtype=tf.float32)
+#             return JSONResponse(content={
+#                 "movement_alert": True,
+#                 "status": "Menneske detektert og rett vibrasjon aktivert!",
+#                 "confidence": confidence,
+#                 "position": "left" if center_x < 320 else "right",
+#                 "timestamp": result.get("timestamp")
+#             })
 
-        print(f"✅ Lyd konvertert: {waveform.shape}")  # Debugging
-        return waveform
+#     return JSONResponse(content={
+#         "movement_alert": False,
+#         "status": "Ingen mennesker detektert.",
+#         "timestamp": result.get("timestamp")
+#     })
 
-    except Exception as e:
-        print(f"❌ Feil under lydprosessering: {str(e)}")
-        return None
 
-# ✅ API-endepunkt for å gjøre prediksjon på lydfiler
-@app.post("/predict/")
-async def predict(file: UploadFile = File(...)):
-    try:
-        # 🎵 Les lydfilen
-        audio_bytes = await file.read()
-        print(f"📂 Lydfil mottatt: {len(audio_bytes)} bytes")  # Sjekk at vi mottar lydfilen
 
-        # 🎵 Lagre filen for testing
-        with open("test_received.wav", "wb") as f:
-            f.write(audio_bytes)
-
-        print("✅ Lydfil lagret som 'test_received.wav' – Sjekk om den kan spilles av!")
-
-        waveform = preprocess_audio(audio_bytes)
-        print(f"🔄 Prosessert lyd - Shape: {waveform.shape}")  # Sjekk at waveform er riktig
-
-        # 🔍 Kjør YAMNet-modellen
-        yamnet_model = yamnet_predict
-        output_dict = yamnet_model(waveform)
-        scores = output_dict["predictions"]
-
-        predicted_class = tf.argmax(scores, axis=-1).numpy()[0]
-        confidence = tf.reduce_max(scores).numpy()
-
-        print(f"🎯 Predikert klasse: {predicted_class} (Sannsynlighet: {confidence:.2f})")  # Logg resultat
-
-        return {"class_id": int(predicted_class), "confidence": float(confidence)}
-
-    except Exception as e:
-        print(f"⚠️ FEIL: {str(e)}")
-        return {"error": str(e)}
 
 @app.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...)):
