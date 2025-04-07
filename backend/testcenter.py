@@ -3,7 +3,7 @@ import math
 from ultralytics import YOLO
 
 # 📷 Stream fra ekstern kamera
-cap = cv2.VideoCapture("http://10.22.111.243:8080/video_feed")
+cap = cv2.VideoCapture("http://10.22.111.227:8080/video_feed")
 model = YOLO('yolo11m.pt')
 
 # 📌 ArUco-innstillinger

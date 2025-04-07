@@ -43,7 +43,7 @@ const AssemblyStep = () => {
 
     return (
         <Container maxWidth="lg">
-            <AlertHuman />
+            {/* <AlertHuman /> */}
             {/* Header Section */}
 <Box sx={{ textAlign: "center", mt: 4 }}>
   <Typography variant="h3" fontWeight="bold" gutterBottom>
