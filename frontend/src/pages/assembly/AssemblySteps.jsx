@@ -96,7 +96,7 @@ const AssemblyStep = () => {
            {/* Navigation Buttons */}
            <Box   sx={{
     display: "flex",
-    justifyContent: "space-between", // behold dette
+    justifyContent: "center", // behold dette
     mx: "10%", // 👈 legger inn margin horisontalt (f.eks. 10%)
     mt: 5,
   }}>

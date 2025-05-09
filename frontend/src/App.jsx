@@ -4,7 +4,7 @@ import theme from "./style/Theme"; // ✅ Import the theme
 
 import Navbar from "./components/Navbar";
 import AppRoutes from "./routes";
-import PopupAlert from "./components/PopupAlert";
+
 import TranscriptionPopup from "./components/TranscriptionComp"; // ✅ Import floating mic button
 import AlertHuman from "./components/AlertHuman";
 
