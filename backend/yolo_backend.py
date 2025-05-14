@@ -4,18 +4,18 @@ import threading
 import time
 import math
 
-# ✅ ArUco-oppsett
+
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 aruco_params = cv2.aruco.DetectorParameters()
-ARUCO_WORKER_ID = 0  # <- endre hvis du bruker annen ID
+ARUCO_WORKER_ID = 0  # <- change if you use another id
 
-# ✅ YOLO-modellen
+
 model = YOLO('yolo11m.pt')
 
-# ✅ Delbar variabel for API
+
 latest_detections = {"detections": [], "timestamp": "", "worker_x": None}
 
-# ✅ Arbeider-lock
+
 locked_worker_center = None
 worker_locked = False
 
@@ -28,19 +28,19 @@ def get_center(bbox):
 def object_function():
     global locked_worker_center, worker_locked
 
-    print("🔄 Starter YOLO object_function()...")
-    cap = cv2.VideoCapture("http://10.22.111.227:8080/video_feed")
+    print("Starting YOLO11 object_function()...")
+    cap = cv2.VideoCapture("http://10.22.111.227:8080/video_feed") #getting the stream from the other computer
 
     if not cap.isOpened():
-        print("❌ OpenCV klarte ikke åpne MJPEG-strømmen.")
+        print("OpenCV could NOT open MJPEG-stream.")
         return
     else:
-        print("✅ OpenCV åpnet MJPEG-strømmen!")
+        print("OpenCV opened MJPEG-stream!")
 
     while True:
         success, frame = cap.read()
         if not success:
-            print("❌ Feil: Kunne ikke lese fra kameraet")
+            print("Could not read from camera!!")
             break
 
         results = model(frame, conf=0.3)
@@ -68,7 +68,7 @@ def object_function():
                         "bbox": bbox
                     })
 
-        # 🔍 Finn ArUco-marker og tilhørende arbeider
+        #finding the worker
         worker_x = None
         corners, ids, _ = cv2.aruco.detectMarkers(frame, aruco_dict, parameters=aruco_params)
 
@@ -91,24 +91,23 @@ def object_function():
 
                 if locked_worker_center:
                     worker_locked = True
-                    print("👷 Arbeider funnet og låst!")
+                    print("Worker found and locked!")
 
             if worker_locked:
                 worker_x = locked_worker_center[0]
 
-        # ✅ Oppdater felles resultater
+        #updating the results
         latest_detections["detections"] = detections
         latest_detections["timestamp"] = time.strftime("%Y-%m-%d %H:%M:%S")
         latest_detections["worker_x"] = worker_x
 
     cap.release()
 
-
-# ✅ Start YOLO i egen tråd
+#threading for easier collection
 yolo_thread = threading.Thread(target=object_function, daemon=True)
 yolo_thread.start()
 
 
-# ✅ API-hjelpefunksjon
+# helping function for api
 def get_latest_detections():
     return latest_detections

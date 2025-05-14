@@ -1,22 +1,22 @@
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline"; // Resets default browser styles
-import theme from "./style/Theme"; // ✅ Import the theme
+import theme from "./style/Theme"; 
 
 import Navbar from "./components/Navbar";
 import AppRoutes from "./routes";
 
-import TranscriptionPopup from "./components/TranscriptionComp"; // ✅ Import floating mic button
+import TranscriptionPopup from "./components/TranscriptionComp"; 
 import AlertHuman from "./components/AlertHuman";
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <CssBaseline /> {/* ✅ Ensures a clean and consistent UI */}
+            <CssBaseline /> 
             <Navbar />
-            {/* <PopupAlert /> ✅ Always listening for movement */}
+            {/* <PopupAlert />  */}
             {/* <AlertHuman /> */}
             <AppRoutes />
-            <TranscriptionPopup /> {/* ✅ Always available */}
+            <TranscriptionPopup /> 
         </ThemeProvider>
     );
 }

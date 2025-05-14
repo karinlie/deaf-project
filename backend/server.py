@@ -18,15 +18,15 @@ from fastapi.responses import JSONResponse
 import json
 
 
-print("🚀 Laster inn Whisper-modellen...")
-whisper_model = whisper.load_model("base")  # Velg "tiny", "small", "medium" eller "large"
-print("✅ Whisper-modellen er lastet!")
+print("Downloading Whisper-model...")
+whisper_model = whisper.load_model("base")  
+print("Whisper-model is loaded")
 
 
 app = FastAPI()
 router = APIRouter()
 
-# ✅ Aktiver CORS slik at frontend (localhost:5173) kan snakke med backend (localhost:8000)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Eller ["http://localhost:5173"] for mer sikkerhet
@@ -48,15 +48,15 @@ if not os.path.exists(log_file):
 
 
 
-arduino_port = "COM4"  # Endre til riktig port (Linux: "/dev/ttyUSB0", Mac: "/dev/cu.usbserial")
-baud_rate = 9600  # Må matche Arduino-koden
+arduino_port = "COM4"  #the port arduino is connected to
+baud_rate = 9600  #needs to match the code in arduino
 
 try:
     arduino = serial.Serial(arduino_port, baud_rate, timeout=1)
-    time.sleep(2)  # Vent på at Arduino starter opp
-    print("✅ Arduino tilkoblet!")
+    time.sleep(2)  
+    print("Arduino is connected!")
 except Exception as e:
-    print(f"❌ Feil ved tilkobling til Arduino: {e}")
+    print(f"Something went wrong with the connection to Arduino: {e}")
 
 
 @app.post("/vibrate")
@@ -86,7 +86,7 @@ async def detect_objects():
 
     print("📸 YOLO Resultat:", detections)
 
-    # 🔐 Ignorer hvis arbeider ikke er definert
+    #ignore if worker does not exist yet
     if worker_x is None:
         return JSONResponse(content={
             "movement_alert": False,
@@ -94,7 +94,7 @@ async def detect_objects():
             "timestamp": timestamp
         })
 
-    # 📏 Hvor nærme er 'for nærme' til arbeideren?
+    #how close the worker should be
     WORKER_IGNORE_MARGIN = 10
 
     for detection in detections:
@@ -183,22 +183,22 @@ async def detect_objects():
 @app.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...)):
     try:
-        # 🚀 Opprett "temp/" mappe hvis den ikke finnes
+        # Make "temp/" folder if it does not exist
         os.makedirs("temp", exist_ok=True)
 
         file_location = f"temp/{file.filename}"
         
-        # 🎵 Lagre filen
+        #save the file
         with open(file_location, "wb") as buffer:
             buffer.write(await file.read())
 
-        print(f"📂 Fil lagret: {file_location}")
+        print(f"File saved: {file_location}")
 
-        # 🔍 Kjør Whisper-modellen
+        
         result = whisper_model.transcribe(file_location)
         transcription = result["text"]
 
-        print(f"📝 Transkribert tekst: {transcription}")
+        print(f"Transcribed text: {transcription}")
 
         return {"text": transcription}
 

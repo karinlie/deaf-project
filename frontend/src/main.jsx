@@ -5,7 +5,7 @@ import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>  {/* 👈 Sørg for at denne kun er her! */}
+    <BrowserRouter>  {/* This should only be here */}
       <App />
     </BrowserRouter>
   </React.StrictMode>

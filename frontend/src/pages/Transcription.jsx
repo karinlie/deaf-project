@@ -27,11 +27,11 @@ export default function Transcription() {
         if (recorder) {
             recorder.stopRecording(() => {
                 let blob = recorder.getBlob();
-                console.log("📂 Opptak format:", blob.type);
-                console.log("📏 Størrelse:", blob.size);
+                console.log("Format:", blob.type);
+                console.log("Size", blob.size);
 
                 if (blob.size <= 44) {
-                    console.error("❌ Opptaket er tomt! WAV-filen inneholder ingen lyd.");
+                    console.error("WAV-file is empty.");
                     return;
                 }
 
@@ -42,7 +42,7 @@ export default function Transcription() {
 
     async function transcribeAudio() {
         if (!audioBlob) {
-            console.error("❌ Ingen lydfil funnet!");
+            console.error("Did not find audiofile");
             return;
         }
 
@@ -57,10 +57,10 @@ export default function Transcription() {
             });
 
             const data = await response.json();
-            console.log("📜 Transkribert tekst:", data.text);
+            console.log("Transcribed text", data.text);
             setTranscription(data.text); 
         } catch (error) {
-            console.error("❌ Feil ved sending av lyd:", error);
+            console.error("Error trouble sending audio:", error);
         }
         setLoading(false);
     }

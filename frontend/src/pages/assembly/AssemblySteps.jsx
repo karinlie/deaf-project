@@ -12,7 +12,7 @@ const AssemblyStep = () => {
 
     useEffect(() => {
         if (!stepNumber) {
-            console.error("🚨 stepNumber is undefined!");
+            console.error(" stepNumber is undefined!");
             return;
         }
     
@@ -29,7 +29,7 @@ const AssemblyStep = () => {
                 if (step) {
                     setStepData(step);
                 } else {
-                    console.error("🚨 No step found for ID:", stepNumber);
+                    console.error("No step found for ID:", stepNumber);
                 }
             })
             .catch(error => {
@@ -83,7 +83,7 @@ const AssemblyStep = () => {
   style={{ 
     maxWidth: "100%", 
     height: "auto", 
-    maxHeight: "250px",  // 👈 flyttet hit!
+    maxHeight: "250px",  
     transition: "0.3s", 
     cursor: "pointer"
   }}
@@ -97,7 +97,7 @@ const AssemblyStep = () => {
            <Box   sx={{
     display: "flex",
     justifyContent: "center", // behold dette
-    mx: "10%", // 👈 legger inn margin horisontalt (f.eks. 10%)
+    mx: "10%", 
     mt: 5,
   }}>
   {stepData.id > 1 ? (

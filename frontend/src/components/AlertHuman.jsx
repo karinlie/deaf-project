@@ -19,7 +19,7 @@
 //         setMovementSide(data.position);
 //       }
 //     } catch (error) {
-//       console.error("❌ Error fetching sensor data:", error);
+//       console.error("Error fetching sensor data:", error);
 //     }
 //   };
 
@@ -99,14 +99,14 @@ const AlertHuman = () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
-      console.log("📡 Received sensor data:", data);
+      console.log("Received sensor data:", data);
 
       if (data.movement_alert === true) {
         setMovementDetected(true);
         setMovementSide(data.position); // "left" or "right"
       }
     } catch (error) {
-      console.error("❌ Error fetching sensor data:", error);
+      console.error("Error fetching sensor data:", error);
     }
   };
 
@@ -115,7 +115,7 @@ const AlertHuman = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Lukk popup automatisk etter 4 sekunder
+  // Close popup after 4 seconds
   useEffect(() => {
     if (movementDetected) {
       const timer = setTimeout(() => setMovementDetected(false), 4000);
@@ -165,39 +165,7 @@ const AlertHuman = () => {
       </Box>
     </Modal>
   );
-    {/* <Box
-      sx={{
-        position: "fixed",
-        bottom: 150,
-        ...(movementSide === "left"
-          ? { left: 20 }
-          : movementSide === "right"
-          ? { right: 20 }
-          : { left: "50%", transform: "translateX(-50%)" }),
-        bgcolor: "#e3f2fd",
-        px: 2,
-        py: 1,
-        borderRadius: 2,
-        boxShadow: 6,
-        border: "none",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        maxWidth: 160,
-       
-      }}
-    >
-      {/* <Typography
-        variant="body2"
-        sx={{  mb: 1, textAlign: "center" }}
-      >
-        Worker detected on the {movementSide}
-      </Typography> */}
-      // <DirectionsWalkIcon sx={{ fontSize: 100, color: "#1976d2" }} />
-  //   </Box>
-  // </Modal> */}
-  // );
+   
 };
 
 export default AlertHuman;

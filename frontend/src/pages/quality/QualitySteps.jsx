@@ -14,7 +14,7 @@ const QualitySteps = () => {
     const { stepNumber } = useParams();
     const stepIndex = parseInt(stepNumber, 10);
 
-    // ✅ Ensure stepIndex is valid
+    //  Ensure stepIndex is valid
     if (isNaN(stepIndex) || stepIndex < 0 || stepIndex >= qualitySteps.length) {
         return (
             <Container maxWidth="md" sx={{ textAlign: "center", my: 4 }}>
@@ -45,13 +45,13 @@ const QualitySteps = () => {
                     {qualitySteps[stepIndex]}
                 </Typography>
 
-                {/* ✅ Image with Text Below - FIXED */}
+                {/* Image with Text Below */}
                 <Box sx={{ 
                     display: "flex", 
                     flexDirection: "column", 
                     alignItems: "center", 
                     mt: 4,
-                    textAlign: "center"  // ✅ Ensures text is centered under the image
+                    textAlign: "center"  
                 }}>
                     <img 
                         src={`/data/images/dino.jpg`}  
@@ -68,7 +68,7 @@ const QualitySteps = () => {
                         sx={{ 
                             mt: 2, 
                             
-                            display: "block", // ✅ Ensures text is treated as a block element
+                            display: "block", 
                             width: "100%", 
                             textAlign: "center"
                         }}
@@ -78,7 +78,7 @@ const QualitySteps = () => {
                 </Box>
             </Box>
 
-            {/* ✅ Navigation Buttons (Next Button Aligned to Right) */}
+            {/* Navigation Buttons */}
             <Box sx={{ display: "flex", justifyContent: stepIndex > 0 ? "space-between" : "flex-end", mt: 5 }}>
                 {stepIndex > 0 && (
                     <Button 
@@ -90,7 +90,7 @@ const QualitySteps = () => {
                         ⬅ Previous Step
                     </Button>
                 )}
-                <Box sx={{ flexGrow: 1 }} />  {/* ✅ Adds spacing between buttons */}
+                <Box sx={{ flexGrow: 1 }} />  {/* Adds spacing between buttons */}
                 {stepIndex < qualitySteps.length - 1 && (
                     <Button 
                         variant="contained" 
