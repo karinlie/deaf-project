@@ -60,7 +60,7 @@ function Home() {
                                 Safety and Compliance Training
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Learn essential safety procedures to avoid workplace hazards.
+                                Learn essential safety procedures to avoid workplace hazards and keep yourself safe.
                             </Typography>
                         </Box>
                     </Grid>
@@ -84,3 +84,5 @@ function Home() {
 }
 
 export default Home;
+
+
