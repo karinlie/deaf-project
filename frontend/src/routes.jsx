@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import AlarmDetector from "./pages/AlarmDetector";
 import Transcription from "./pages/Transcription";
 import AssemblyTraining from "./pages/AssemblyTraining";
 import AssemblySteps from "./pages/assembly/AssemblySteps";   
@@ -17,7 +16,6 @@ function AppRoutes() {
             
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/alarm" element={<AlarmDetector />} />
                 <Route path="/transcription" element={<Transcription />} />
                 <Route path="/assembly" element={<AssemblyTraining />} />
                 <Route path= "/assembly-techniques" element={<AssemblyWelcome />}/>
